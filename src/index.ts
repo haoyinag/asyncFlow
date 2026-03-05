@@ -1,5 +1,6 @@
 export * from "./types";
 export * from "./errors";
+export * from "./sugar";
 
 export { AsyncFlowEngine, createAsyncFlow } from "./engine";
 

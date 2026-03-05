@@ -8,6 +8,8 @@
 - README（英文）：[README.md](./README.md)
 - 示例（英文）：[examples/README.md](./examples/README.md)
 - 示例（中文）：[examples/README.zh-CN.md](./examples/README.zh-CN.md)
+- 使用说明（英文）：[docs/USAGE.md](./docs/USAGE.md)
+- 使用说明（中文）：[docs/USAGE.zh-CN.md](./docs/USAGE.zh-CN.md)
 
 ## v0.1 MVP 范围
 - 支持 `defer` / `async` 编排与嵌套
@@ -40,4 +42,27 @@ React:
 ```ts
 const flow = createFlow({ mode: "defer", tasks: [() => 1] });
 const { run, status, loading, data, error, cancel } = useReactAsyncFlow(flow);
+```
+
+## 更简洁的流程写法（低心智负担）
+```ts
+import { createFlow, deferFlow } from "asyncflow";
+
+const userFlow = createFlow(
+  deferFlow([
+    async ({ signal }) => {
+      await sleep(200, signal);
+      return "token-001";
+    },
+    async ({ last, signal }) => {
+      await sleep(300, signal);
+      const token = last() as string;
+      return { id: 1, name: "Ada", token };
+    },
+    ({ last }) => {
+      const profile = last() as { id: number; name: string };
+      return `${profile.name}#${profile.id}`;
+    }
+  ], "user-flow")
+);
 ```
