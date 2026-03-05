@@ -1,6 +1,6 @@
 {
   "name": "mangoo",
-  "version": "0.1.0",
+  "version": "0.2.01",
   "description": "Lightweight async task guardrails for native async/await workflows",
   "type": "module",
   "main": "./dist/index.js",
@@ -9,6 +9,14 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "import": "./dist/vue.js"
     }
   },
   "files": [
@@ -38,12 +46,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/haoyinag/asyncFlow.git"
+    "url": "git+https://github.com/haoyinag/mangoo.git"
   },
   "bugs": {
-    "url": "https://github.com/haoyinag/asyncFlow/issues"
+    "url": "https://github.com/haoyinag/mangoo/issues"
   },
-  "homepage": "https://github.com/haoyinag/asyncFlow#readme",
+  "homepage": "https://github.com/haoyinag/mangoo#readme",
   "publishConfig": {
     "access": "public"
   },

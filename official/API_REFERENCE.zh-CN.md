@@ -2,9 +2,9 @@
 
 ## 错误模型
 
-### `AsyncFlowError`
+### `AsyncTaskError`
 ```ts
-interface AsyncFlowError {
+interface AsyncTaskError {
   code: string;
   message: string;
   kind: "abort" | "network" | "business" | "unknown";
@@ -76,11 +76,13 @@ createRunner({ concurrency?, mode? })
 - `runTask`
 - `runParallel`
 
-## `useReactAsyncTask`
+## `useTask`（React）
 
 ### 签名
 ```ts
-useReactAsyncTask(taskFn, options?, initialMeta?)
+import { useTask } from "mangoo/react";
+
+useTask(taskFn, options?, initialMeta?)
 ```
 
 ### 返回
@@ -94,11 +96,13 @@ useReactAsyncTask(taskFn, options?, initialMeta?)
 - `error`
 - `meta`
 
-## `useVueAsyncTask`
+## `useTask`（Vue）
 
 ### 签名
 ```ts
-useVueAsyncTask(taskFn, options?, initialMeta?)
+import { useTask } from "mangoo/vue";
+
+useTask(taskFn, options?, initialMeta?)
 ```
 
 ### 返回

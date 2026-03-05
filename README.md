@@ -10,8 +10,8 @@
 - `runTask`
 - `runParallel`
 - `createRunner`
-- `useReactAsyncTask`
-- `useVueAsyncTask`
+- `useTask` from `mangoo/react`
+- `useTask` from `mangoo/vue`
 
 ## Principles
 1. Keep business logic in native `async/await`

@@ -8,14 +8,14 @@ export interface VueUseAsyncTaskState<I = unknown, O = unknown, M extends Record
   status: Ref<"idle" | "running" | "success" | "error" | "aborted">;
   loading: Ref<boolean>;
   data: ShallowRef<O | undefined>;
-  error: ShallowRef<import("../errors").AsyncFlowError | null>;
+  error: ShallowRef<import("../errors").AsyncTaskError | null>;
   meta: Ref<Record<string, unknown>>;
   run: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
   execute: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
   cancel: (reason?: string) => void;
 }
 
-export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>>(
+export function useTask<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>>(
   taskFn: TaskFn<I, O, M>,
   options: RunnerOptions = {},
   initialMeta?: M
@@ -26,7 +26,7 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
   const status = ref<"idle" | "running" | "success" | "error" | "aborted">("idle");
   const loading = ref(false);
   const data = shallowRef<O | undefined>(undefined);
-  const error = shallowRef<import("../errors").AsyncFlowError | null>(null);
+  const error = shallowRef<import("../errors").AsyncTaskError | null>(null);
   const meta = ref<Record<string, unknown>>((initialMeta ?? {}) as Record<string, unknown>);
 
   let currentTask: TaskHandleSimple<O, M> | null = null;
@@ -86,3 +86,5 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
     cancel
   };
 }
+
+export { useTask as useAsyncTask };

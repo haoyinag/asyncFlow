@@ -1,4 +1,4 @@
-import { AsyncFlowError, makeAbortError, toFlowError } from "./errors";
+import { AsyncTaskError, makeAbortError, toTaskError } from "./errors";
 import type { ParallelRunOptions, ParallelTask } from "./types";
 
 function attachSignal(parent?: AbortSignal) {
@@ -23,7 +23,7 @@ export async function runParallel<I = unknown, O = unknown>(
   const abortOnError = mode === "fail-fast";
 
   if (concurrency <= 0 || Number.isNaN(concurrency)) {
-    throw new AsyncFlowError({
+    throw new AsyncTaskError({
       code: "INVALID_CONCURRENCY",
       kind: "business",
       message: "concurrency must be > 0",
@@ -36,7 +36,7 @@ export async function runParallel<I = unknown, O = unknown>(
 
   const controller = attachSignal(options.signal);
   const results: O[] = new Array(tasks.length);
-  const errors: Array<AsyncFlowError | undefined> = new Array(tasks.length);
+  const errors: Array<AsyncTaskError | undefined> = new Array(tasks.length);
 
   let nextIndex = 0;
   let active = 0;
@@ -58,7 +58,7 @@ export async function runParallel<I = unknown, O = unknown>(
         return;
       }
 
-      const failed = errors.filter(Boolean) as AsyncFlowError[];
+      const failed = errors.filter(Boolean) as AsyncTaskError[];
       if (failed.length > 0) {
         reject(new AggregateError(failed, "One or more parallel tasks failed"));
         return;
@@ -84,9 +84,9 @@ export async function runParallel<I = unknown, O = unknown>(
           .catch((error) => {
             const err = controller.signal.aborted
               ? makeAbortError("Parallel task aborted", `parallel:${current}`, error)
-              : error instanceof AsyncFlowError
+              : error instanceof AsyncTaskError
                 ? error
-                : toFlowError(error, `parallel:${current}`, "parallel");
+                : toTaskError(error, `parallel:${current}`, "parallel");
 
             errors[current] = err;
 

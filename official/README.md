@@ -6,8 +6,8 @@ mangoo is a native-first async guardrail library.
 - `runTask`
 - `runParallel`
 - `createRunner`
-- `useReactAsyncTask`
-- `useVueAsyncTask`
+- `useTask` from `mangoo/react`
+- `useTask` from `mangoo/vue`
 
 ## Documentation Index
 1. [Get Started in 10 Minutes (ZH)](./GET_STARTED.zh-CN.md)

@@ -1,6 +1,6 @@
-import type { AsyncFlowErrorShape } from "./types";
+import type { AsyncTaskErrorShape } from "./types";
 
-export class AsyncFlowError extends Error implements AsyncFlowErrorShape {
+export class AsyncTaskError extends Error implements AsyncTaskErrorShape {
   code: string;
   kind: "abort" | "network" | "business" | "unknown";
   stepId?: string;
@@ -8,9 +8,9 @@ export class AsyncFlowError extends Error implements AsyncFlowErrorShape {
   cause?: unknown;
   aborted: boolean;
 
-  constructor(input: AsyncFlowErrorShape) {
+  constructor(input: AsyncTaskErrorShape) {
     super(input.message);
-    this.name = "AsyncFlowError";
+    this.name = "AsyncTaskError";
     this.code = input.code;
     this.kind = input.kind;
     this.stepId = input.stepId;
@@ -21,7 +21,7 @@ export class AsyncFlowError extends Error implements AsyncFlowErrorShape {
 }
 
 export function makeAbortError(message: string, stepId?: string, cause?: unknown) {
-  return new AsyncFlowError({
+  return new AsyncTaskError({
     code: "ABORTED",
     kind: "abort",
     message,
@@ -48,11 +48,11 @@ function inferKind(error: unknown): "abort" | "network" | "business" | "unknown"
   return "unknown";
 }
 
-export function toFlowError(error: unknown, stepId: string, phase: string): AsyncFlowError {
-  if (error instanceof AsyncFlowError) return error;
+export function toTaskError(error: unknown, stepId: string, phase: string): AsyncTaskError {
+  if (error instanceof AsyncTaskError) return error;
 
   const message = error instanceof Error ? error.message : String(error);
-  return new AsyncFlowError({
+  return new AsyncTaskError({
     code: "STEP_ERROR",
     kind: inferKind(error),
     message,

@@ -2,9 +2,9 @@
 
 ## Error Model
 
-### `AsyncFlowError`
+### `AsyncTaskError`
 ```ts
-interface AsyncFlowError {
+interface AsyncTaskError {
   code: string;
   message: string;
   kind: "abort" | "network" | "business" | "unknown";
@@ -79,11 +79,13 @@ createRunner({ concurrency?, mode? })
 - `runTask`
 - `runParallel`
 
-## `useReactAsyncTask`
+## `useTask` (React)
 
 ### Signature
 ```ts
-useReactAsyncTask(taskFn, options?, initialMeta?)
+import { useTask } from "mangoo/react";
+
+useTask(taskFn, options?, initialMeta?)
 ```
 
 ### Return
@@ -97,11 +99,13 @@ useReactAsyncTask(taskFn, options?, initialMeta?)
 - `error`
 - `meta`
 
-## `useVueAsyncTask`
+## `useTask` (Vue)
 
 ### Signature
 ```ts
-useVueAsyncTask(taskFn, options?, initialMeta?)
+import { useTask } from "mangoo/vue";
+
+useTask(taskFn, options?, initialMeta?)
 ```
 
 ### Return

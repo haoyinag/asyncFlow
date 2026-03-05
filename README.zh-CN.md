@@ -10,8 +10,8 @@
 - `runTask`
 - `runParallel`
 - `createRunner`
-- `useReactAsyncTask`
-- `useVueAsyncTask`
+- `useTask`（`mangoo/react`）
+- `useTask`（`mangoo/vue`）
 
 ## 设计原则
 1. 业务主线保持原生 `async/await`

@@ -1,4 +1,4 @@
-export interface AsyncFlowErrorShape {
+export interface AsyncTaskErrorShape {
   code: string;
   message: string;
   kind: "abort" | "network" | "business" | "unknown";
@@ -14,7 +14,7 @@ export interface TaskState<T = unknown, M extends Record<string, unknown> = Reco
   status: TaskStatus;
   loading: boolean;
   data: T | undefined;
-  error: import("./errors").AsyncFlowError | null;
+  error: import("./errors").AsyncTaskError | null;
   meta: M;
   startedAt: number | null;
   endedAt: number | null;
@@ -23,7 +23,7 @@ export interface TaskState<T = unknown, M extends Record<string, unknown> = Reco
 export interface TaskResult<T = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
   status: Exclude<TaskStatus, "idle" | "running">;
   data: T | undefined;
-  error: import("./errors").AsyncFlowError | null;
+  error: import("./errors").AsyncTaskError | null;
   meta: M;
 }
 

@@ -6,8 +6,8 @@ mangoo 是一个原生优先的异步护栏库。
 - `runTask`
 - `runParallel`
 - `createRunner`
-- `useReactAsyncTask`
-- `useVueAsyncTask`
+- `useTask`（`mangoo/react`）
+- `useTask`（`mangoo/vue`）
 
 ## 文档目录
 1. [10 分钟上手（新手版）](./GET_STARTED.zh-CN.md)

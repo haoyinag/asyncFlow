@@ -1,4 +1,4 @@
-import { AsyncFlowError, makeAbortError, toFlowError } from "./errors";
+import { AsyncTaskError, makeAbortError, toTaskError } from "./errors";
 import type {
   TaskContext,
   TaskFn,
@@ -95,9 +95,9 @@ export function runTask<I = unknown, O = unknown, M extends Record<string, unkno
     } catch (error) {
       const err = controller.signal.aborted
         ? makeAbortError("Task aborted", undefined, error)
-        : error instanceof AsyncFlowError
+        : error instanceof AsyncTaskError
           ? error
-          : toFlowError(error, "runTask", "task");
+          : toTaskError(error, "runTask", "task");
 
       state.status = err.aborted ? "aborted" : "error";
       state.loading = false;

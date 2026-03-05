@@ -7,14 +7,14 @@ export interface ReactUseAsyncTaskState<I = unknown, O = unknown, M extends Reco
   status: "idle" | "running" | "success" | "error" | "aborted";
   loading: boolean;
   data: O | undefined;
-  error: import("../errors").AsyncFlowError | null;
+  error: import("../errors").AsyncTaskError | null;
   meta: M;
   run: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
   execute: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
   cancel: (reason?: string) => void;
 }
 
-export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>>(
+export function useTask<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>>(
   taskFn: TaskFn<I, O, M>,
   options: RunnerOptions = {},
   initialMeta?: M
@@ -28,7 +28,7 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
   const [status, setStatus] = useState<"idle" | "running" | "success" | "error" | "aborted">("idle");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<O | undefined>(undefined);
-  const [error, setError] = useState<import("../errors").AsyncFlowError | null>(null);
+  const [error, setError] = useState<import("../errors").AsyncTaskError | null>(null);
   const [meta, setMeta] = useState<M>((initialMeta ?? ({} as M)));
 
   const clearSubscription = useCallback(() => {
@@ -88,3 +88,5 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
     cancel
   };
 }
+
+export { useTask as useAsyncTask };

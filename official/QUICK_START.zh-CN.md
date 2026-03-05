@@ -28,18 +28,18 @@ const result = await task.result;
 
 ## React Hook
 ```tsx
-import { useReactAsyncTask } from "mangoo";
+import { useTask } from "mangoo/react";
 
-const { run, execute, cancel, status, loading, data, error } = useReactAsyncTask(async ({ signal, params }) => {
+const { run, execute, cancel, status, loading, data, error } = useTask(async ({ signal, params }) => {
   return login(params, signal);
 });
 ```
 
 ## Vue Hook
 ```ts
-import { useVueAsyncTask } from "mangoo";
+import { useTask } from "mangoo/vue";
 
-const { run, execute, cancel, status, loading, data, error } = useVueAsyncTask(async ({ signal, params }) => {
+const { run, execute, cancel, status, loading, data, error } = useTask(async ({ signal, params }) => {
   return login(params, signal);
 });
 ```
