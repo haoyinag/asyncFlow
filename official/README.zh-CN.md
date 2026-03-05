@@ -1,6 +1,6 @@
-# AsyncFlow 官方文档（v0.2 草案）
+# mangoo 官方文档（v0.2 草案）
 
-AsyncFlow 是一个原生优先的异步护栏库。
+mangoo 是一个原生优先的异步护栏库。
 
 ## 当前 API 范围
 - `runTask`

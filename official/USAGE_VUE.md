@@ -2,13 +2,13 @@
 
 ## Global initialization
 ```ts
-import { createRunner } from "asyncflow";
+import { createRunner } from "mangoo";
 export const asyncRunner = createRunner({ concurrency: 4, mode: "fail-fast" });
 ```
 
 ## Child component usage
 ```ts
-import { useVueAsyncTask } from "asyncflow";
+import { useVueAsyncTask } from "mangoo";
 
 const { execute, cancel, status, loading, data, error } = useVueAsyncTask(async ({ params, signal }) => {
   const qr = await getLoginQrCode(signal);

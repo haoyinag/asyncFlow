@@ -2,7 +2,7 @@
 
 ## 1. 全局初始化（推荐）
 ```ts
-import { createRunner } from "asyncflow";
+import { createRunner } from "mangoo";
 
 export const asyncRunner = createRunner({
   concurrency: 4,
@@ -12,7 +12,7 @@ export const asyncRunner = createRunner({
 
 ## 2. 子组件使用
 ```tsx
-import { useReactAsyncTask } from "asyncflow";
+import { useReactAsyncTask } from "mangoo";
 
 const { execute, cancel, status, loading, data, error } = useReactAsyncTask(async ({ params, signal }) => {
   const qr = await getLoginQrCode(signal);

@@ -1,6 +1,6 @@
-# AsyncFlow Official Docs (v0.2 Draft)
+# mangoo Official Docs (v0.2 Draft)
 
-AsyncFlow is a native-first async guardrail library.
+mangoo is a native-first async guardrail library.
 
 ## Current API Surface
 - `runTask`

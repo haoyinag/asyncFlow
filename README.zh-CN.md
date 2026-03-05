@@ -1,6 +1,6 @@
-# AsyncFlow
+# mangoo
 
-AsyncFlow 是一个“原生优先”的异步护栏库。
+`mangoo` 是一个“原生优先”的异步护栏库。
 
 ## 当前状态
 - 基线版本：`v0.1`（已锁定）
@@ -28,7 +28,7 @@ AsyncFlow 是一个“原生优先”的异步护栏库。
 
 ## 常用命令
 ```bash
-npm install
+npm install mangoo
 npm test
 npm run build
 ```

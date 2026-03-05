@@ -1,6 +1,6 @@
-# AsyncFlow
+# mangoo
 
-AsyncFlow is a native-first async guardrail library.
+`mangoo` is a native-first async guardrail library.
 
 ## Current Status
 - Baseline: `v0.1` (locked)
@@ -28,7 +28,7 @@ AsyncFlow is a native-first async guardrail library.
 
 ## Commands
 ```bash
-npm install
+npm install mangoo
 npm test
 npm run build
 ```

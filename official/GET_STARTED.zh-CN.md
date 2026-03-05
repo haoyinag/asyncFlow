@@ -8,7 +8,7 @@
 
 ## 第 2 步：直接复制这个最小模板
 ```ts
-import { runTask, runParallel } from "asyncflow";
+import { runTask, runParallel } from "mangoo";
 
 const task = runTask(async ({ params, signal }) => {
   // 串行步骤（原生 await）

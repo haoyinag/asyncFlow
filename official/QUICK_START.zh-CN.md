@@ -2,12 +2,12 @@
 
 ## 安装
 ```bash
-npm install
+npm install mangoo
 ```
 
 ## 最小示例
 ```ts
-import { runTask, runParallel } from "asyncflow";
+import { runTask, runParallel } from "mangoo";
 
 const task = runTask(async ({ signal }) => {
   const token = await getToken(signal);
@@ -28,7 +28,7 @@ const result = await task.result;
 
 ## React Hook
 ```tsx
-import { useReactAsyncTask } from "asyncflow";
+import { useReactAsyncTask } from "mangoo";
 
 const { run, execute, cancel, status, loading, data, error } = useReactAsyncTask(async ({ signal, params }) => {
   return login(params, signal);
@@ -37,7 +37,7 @@ const { run, execute, cancel, status, loading, data, error } = useReactAsyncTask
 
 ## Vue Hook
 ```ts
-import { useVueAsyncTask } from "asyncflow";
+import { useVueAsyncTask } from "mangoo";
 
 const { run, execute, cancel, status, loading, data, error } = useVueAsyncTask(async ({ signal, params }) => {
   return login(params, signal);

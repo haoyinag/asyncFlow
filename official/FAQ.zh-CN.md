@@ -1,7 +1,7 @@
 # 常见问题
 
 ## Q1：会替代 async/await 吗？
-不会。AsyncFlow 只做护栏层。
+不会。mangoo 只做护栏层。
 
 ## Q2：必须用 axios 吗？
 不需要，和请求库无耦合。
