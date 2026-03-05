@@ -1,6 +1,3 @@
-export type FlowMode = "defer" | "async";
-export type FlowStatus = "idle" | "running" | "success" | "error" | "aborted";
-
 export interface AsyncFlowErrorShape {
   code: string;
   message: string;
@@ -10,166 +7,64 @@ export interface AsyncFlowErrorShape {
   aborted: boolean;
 }
 
-export interface NodeTiming {
-  startedAt: number;
-  endedAt: number;
-  duration: number;
-}
+export type TaskStatus = "idle" | "running" | "success" | "error" | "aborted";
 
-export interface StepEnvelope extends NodeTiming {
-  kind: "step";
-  id: string;
-  ok: boolean;
-  aborted: boolean;
-  status: "fulfilled" | "rejected" | "aborted";
-  data?: unknown;
-  error?: import("./errors").AsyncFlowError;
-}
-
-export interface GroupEnvelope extends NodeTiming {
-  kind: "group";
-  id: string;
-  ok: boolean;
-  aborted: boolean;
-  status: "fulfilled" | "rejected" | "aborted";
-  mode: FlowMode;
-  total: number;
-  success: number;
-  failed: number;
-  canceled: number;
-  byIndex: NodeEnvelope[];
-  byId: Record<string, NodeEnvelope>;
-  error?: import("./errors").AsyncFlowError;
-}
-
-export type NodeEnvelope = StepEnvelope | GroupEnvelope;
-
-export type PrevValue =
-  | { type: "single"; value: StepEnvelope }
-  | { type: "group"; value: GroupEnvelope };
-
-export interface FlowContext<I = unknown> {
-  input: I;
-  signal: AbortSignal;
-  prev?: PrevValue;
-  meta: {
-    flowId: string;
-    nodeId: string;
-  };
-  last: () => unknown;
-  pick: (id: string) => unknown;
-  results: () => Record<string, unknown>;
-}
-
-export type StepHandler<I = unknown> = (ctx: FlowContext<I>) => unknown | Promise<unknown>;
-
-export interface StepNodeInput<I = unknown> {
-  id?: string;
-  run: StepHandler<I>;
-}
-
-export interface GroupNodeInput<I = unknown> {
-  id?: string;
-  mode: FlowMode;
-  tasks: TaskInput<I>[];
-}
-
-export interface FlowInputObject<I = unknown> {
-  id?: string;
-  mode?: FlowMode;
-  tasks: TaskInput<I>[];
-}
-
-export type TaskInput<I = unknown> =
-  | StepHandler<I>
-  | StepNodeInput<I>
-  | GroupNodeInput<I>
-  | TaskInput<I>[];
-
-export interface StepNode<I = unknown> {
-  kind: "step";
-  id: string;
-  run: StepHandler<I>;
-}
-
-export interface GroupNode<I = unknown> {
-  kind: "group";
-  id: string;
-  mode: FlowMode;
-  tasks: NodeInput<I>[];
-}
-
-export type NodeInput<I = unknown> = StepNode<I> | GroupNode<I>;
-
-export interface FlowDef<I = unknown> {
-  id: string;
-  mode: FlowMode;
-  tasks: NodeInput<I>[];
-}
-
-export interface FlowEvent {
-  type:
-    | "flow:start"
-    | "flow:end"
-    | "step:start"
-    | "step:success"
-    | "step:error"
-    | "step:abort"
-    | "group:start"
-    | "group:end";
-  flowId: string;
-  nodeId?: string;
-  at: number;
-}
-
-export interface FlowState {
-  status: FlowStatus;
+export interface TaskState<T = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
+  status: TaskStatus;
   loading: boolean;
-  data: unknown;
+  data: T | undefined;
   error: import("./errors").AsyncFlowError | null;
+  meta: M;
   startedAt: number | null;
   endedAt: number | null;
-  lastEvent: FlowEvent | null;
 }
 
-export interface FlowResult {
-  status: Exclude<FlowStatus, "idle" | "running">;
-  data: unknown;
+export interface TaskResult<T = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
+  status: Exclude<TaskStatus, "idle" | "running">;
+  data: T | undefined;
   error: import("./errors").AsyncFlowError | null;
-  envelopes: Record<string, NodeEnvelope>;
+  meta: M;
 }
 
-export interface RunOptions {
-  abortOnError?: boolean;
-  concurrency?: number;
+export interface TaskContext<I = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
+  input: I;
+  signal: AbortSignal;
+  setMeta: (patch: Partial<M>) => void;
+  getMeta: () => M;
+}
+
+export type TaskFn<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>> = (
+  ctx: TaskContext<I, M>
+) => O | Promise<O>;
+
+export interface TaskRunOptions {
   signal?: AbortSignal;
 }
 
-export interface EngineOptions extends RunOptions {}
-
-export interface TaskHandle {
+export interface TaskHandleSimple<T = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
   readonly id: string;
-  readonly result: Promise<FlowResult>;
+  readonly result: Promise<TaskResult<T, M>>;
   cancel: (reason?: string) => void;
-  onState: (listener: (state: FlowState) => void) => () => void;
-  getState: () => FlowState;
+  onState: (listener: (state: TaskState<T, M>) => void) => () => void;
+  getState: () => TaskState<T, M>;
 }
 
-export interface FlowTemplate<I = unknown> {
-  id: string;
-  run: (input?: I, options?: RunOptions) => TaskHandle;
+export interface ParallelTaskContext<I = unknown> {
+  input: I;
+  signal: AbortSignal;
+  index: number;
 }
 
-export interface Runtime {
-  flowId: string;
-  input: unknown;
-  controller: AbortController;
-  options: Required<Pick<RunOptions, "abortOnError" | "concurrency">>;
-  envelopes: Record<string, NodeEnvelope>;
-  emitEvent: (event: FlowEvent) => void;
+export type ParallelTask<I = unknown, O = unknown> = (
+  ctx: ParallelTaskContext<I>
+) => O | Promise<O>;
+
+export interface ParallelRunOptions extends TaskRunOptions {
+  concurrency?: number;
+  abortOnError?: boolean;
 }
 
-export interface ListenerStore {
-  state: FlowState;
-  listeners: Set<(state: FlowState) => void>;
+export interface RunnerOptions {
+  concurrency?: number;
+  abortOnError?: boolean;
 }

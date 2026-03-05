@@ -1,15 +1,6 @@
 export * from "./types";
 export * from "./errors";
-export * from "./sugar";
+export * from "./runner";
 
-export { AsyncFlowEngine, createAsyncFlow } from "./engine";
-
-import { createAsyncFlow } from "./engine";
-
-const defaultEngine = createAsyncFlow();
-
-export const createFlow = defaultEngine.createFlow;
-export const runFlow = defaultEngine.runFlow;
-
-export { useAsyncFlow as useVueAsyncFlow } from "./adapters/vue";
-export { useAsyncFlow as useReactAsyncFlow } from "./adapters/react";
+export { useAsyncTask as useReactAsyncTask } from "./adapters/react-task";
+export { useAsyncTask as useVueAsyncTask } from "./adapters/vue-task";

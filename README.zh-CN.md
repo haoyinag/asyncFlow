@@ -1,68 +1,34 @@
 # AsyncFlow
 
-一个面向 Promise/async-await 场景的轻量异步任务编排引擎。
+AsyncFlow v0.1 是一个“原生优先”的异步护栏库。
 
-## 文档
-- 锁定规范（英文）：[SPEC_LOCK.md](./SPEC_LOCK.md)
-- 锁定规范（中文）：[SPEC_LOCK.zh-CN.md](./SPEC_LOCK.zh-CN.md)
-- README（英文）：[README.md](./README.md)
-- 示例（英文）：[examples/README.md](./examples/README.md)
-- 示例（中文）：[examples/README.zh-CN.md](./examples/README.zh-CN.md)
-- 使用说明（英文）：[docs/USAGE.md](./docs/USAGE.md)
-- 使用说明（中文）：[docs/USAGE.zh-CN.md](./docs/USAGE.zh-CN.md)
+## 当前状态
+- 版本：`v0.1`
+- 状态：暂时锁定
 
-## v0.1 MVP 范围
-- 支持 `defer` / `async` 编排与嵌套
-- 支持 `ctx.prev` 与 `last/pick/results` 数据传递
-- 自动注入 `AbortSignal`、默认 fail-fast、支持手动取消
-- 支持全局并发上限
-- 支持流程状态订阅
-- 统一 `AsyncFlowError` 错误模型
-- 支持 Vue/React 适配 Hook（`useAsyncFlow`）并自动清理
+## v0.1 主 API
+- `runTask`
+- `runParallel`
+- `createRunner`
+- `useReactAsyncTask`
+- `useVueAsyncTask`
 
-## 快速开始
+## 设计原则
+1. 业务主线保持原生 `async/await`
+2. 统一状态/取消/并发/错误护栏
+3. 核心层框架无关
+4. 核心层请求库无关
+
+## 官方文档
+- 英文： [official/README.md](./official/README.md)
+- 中文： [official/README.zh-CN.md](./official/README.zh-CN.md)
+
+## 示例
+- [examples/README.zh-CN.md](./examples/README.zh-CN.md)
+
+## 常用命令
 ```bash
 npm install
 npm test
 npm run build
-```
-
-## 适配层 Hook
-```ts
-import { createFlow, useVueAsyncFlow, useReactAsyncFlow } from "asyncflow";
-```
-
-Vue:
-```ts
-const flow = createFlow({ mode: "defer", tasks: [() => 1] });
-const { run, status, loading, data, error, cancel } = useVueAsyncFlow(flow);
-```
-
-React:
-```ts
-const flow = createFlow({ mode: "defer", tasks: [() => 1] });
-const { run, status, loading, data, error, cancel } = useReactAsyncFlow(flow);
-```
-
-## 更简洁的流程写法（低心智负担）
-```ts
-import { createFlow, deferFlow } from "asyncflow";
-
-const userFlow = createFlow(
-  deferFlow([
-    async ({ signal }) => {
-      await sleep(200, signal);
-      return "token-001";
-    },
-    async ({ last, signal }) => {
-      await sleep(300, signal);
-      const token = last() as string;
-      return { id: 1, name: "Ada", token };
-    },
-    ({ last }) => {
-      const profile = last() as { id: number; name: string };
-      return `${profile.name}#${profile.id}`;
-    }
-  ], "user-flow")
-);
 ```
