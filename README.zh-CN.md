@@ -23,8 +23,9 @@
 - 英文： [official/README.md](./official/README.md)
 - 中文： [official/README.zh-CN.md](./official/README.zh-CN.md)
 
-## 示例
-- [examples/README.zh-CN.md](./examples/README.zh-CN.md)
+## 使用指南
+- [official/USAGE_REACT.zh-CN.md](./official/USAGE_REACT.zh-CN.md)
+- [official/USAGE_VUE.zh-CN.md](./official/USAGE_VUE.zh-CN.md)
 
 ## 常用命令
 ```bash

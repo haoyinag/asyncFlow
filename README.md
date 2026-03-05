@@ -23,8 +23,9 @@
 - English: [official/README.md](./official/README.md)
 - Chinese: [official/README.zh-CN.md](./official/README.zh-CN.md)
 
-## Examples
-- [examples/README.zh-CN.md](./examples/README.zh-CN.md)
+## Usage Guides
+- [official/USAGE_REACT.md](./official/USAGE_REACT.md)
+- [official/USAGE_VUE.md](./official/USAGE_VUE.md)
 
 ## Commands
 ```bash
