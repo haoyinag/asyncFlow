@@ -10,7 +10,8 @@ export interface VueUseAsyncTaskState<I = unknown, O = unknown, M extends Record
   data: ShallowRef<O | undefined>;
   error: ShallowRef<import("../errors").AsyncFlowError | null>;
   meta: Ref<Record<string, unknown>>;
-  run: (input?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
+  run: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
+  execute: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
   cancel: (reason?: string) => void;
 }
 
@@ -38,13 +39,17 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
     }
   };
 
-  const run = async (input?: I, runOptions?: TaskRunOptions) => {
+  const run = async (params?: I, runOptions?: TaskRunOptions) => {
     if (currentTask) {
       currentTask.cancel("replaced_by_new_run");
       clearSubscription();
     }
 
-    const task = runner.runTask(taskFn, input, runOptions, initialMeta);
+    const task = runner.runTask(taskFn, {
+      params,
+      signal: runOptions?.signal,
+      meta: initialMeta
+    });
     currentTask = task;
     taskId.value = task.id;
 
@@ -77,6 +82,7 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
     error,
     meta,
     run,
+    execute: run,
     cancel
   };
 }

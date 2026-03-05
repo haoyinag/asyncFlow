@@ -1,5 +1,12 @@
 import { AsyncFlowError, makeAbortError, toFlowError } from "./errors";
-import type { TaskContext, TaskFn, TaskHandleSimple, TaskResult, TaskRunOptions, TaskState } from "./types";
+import type {
+  TaskContext,
+  TaskFn,
+  TaskHandleSimple,
+  TaskResult,
+  TaskRunConfig,
+  TaskState
+} from "./types";
 
 let taskCounter = 0;
 
@@ -33,13 +40,17 @@ function attachSignal(parent?: AbortSignal) {
 
 export function runTask<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>>(
   taskFn: TaskFn<I, O, M>,
-  input?: I,
-  options: TaskRunOptions = {},
-  initialMeta?: M
+  config?: TaskRunConfig<I, M>
 ): TaskHandleSimple<O, M> {
+  const parsed = {
+    params: config?.params,
+    signal: config?.signal,
+    meta: (config?.meta ?? ({} as M))
+  };
+
   const id = `task_${++taskCounter}`;
-  const controller = attachSignal(options.signal);
-  const meta = (initialMeta ?? ({} as M));
+  const controller = attachSignal(parsed.signal);
+  const meta = parsed.meta;
 
   const listeners = new Set<(state: TaskState<O, M>) => void>();
   const state = createInitialState<O, M>(meta);
@@ -62,7 +73,7 @@ export function runTask<I = unknown, O = unknown, M extends Record<string, unkno
   const result = (async (): Promise<TaskResult<O, M>> => {
     try {
       const ctx: TaskContext<I, M> = {
-        input: input as I,
+        params: parsed.params as I,
         signal: controller.signal,
         setMeta,
         getMeta: () => ({ ...state.meta })

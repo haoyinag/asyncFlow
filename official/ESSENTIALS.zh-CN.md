@@ -1,29 +1,21 @@
 # 核心概念
 
 ## runTask
-把一个异步函数变成可观测、可取消的任务：
-- 输入：`taskFn(ctx)`
-- 输出：`TaskHandle`
+`runTask` 执行一个异步任务，返回任务句柄：
+1. `result`
+2. `cancel`
+3. `onState`
+4. `getState`
 
-`ctx` 包含：
-- `input`
-- `signal`
-- `setMeta`
-- `getMeta`
-
-`TaskHandle` 包含：
-- `result`
-- `cancel`
-- `onState`
-- `getState`
+`taskFn` 使用 `params` 获取本次执行输入。
 
 ## runParallel
-并发执行任务数组，并支持：
-- 并发上限 `concurrency`
-- 失败策略 `abortOnError`
+`runParallel` 负责并发段：
+1. 并发上限 `concurrency`
+2. 失败策略 `mode: fail-fast | collect-all`
 
 ## createRunner
-集中注入默认策略：
+在应用初始化时集中定义默认策略：
 ```ts
-const runner = createRunner({ concurrency: 4, abortOnError: true });
+const runner = createRunner({ concurrency: 4, mode: "fail-fast" });
 ```

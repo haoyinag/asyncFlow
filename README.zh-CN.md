@@ -1,12 +1,12 @@
 # AsyncFlow
 
-AsyncFlow v0.1 是一个“原生优先”的异步护栏库。
+AsyncFlow 是一个“原生优先”的异步护栏库。
 
 ## 当前状态
-- 版本：`v0.1`
-- 状态：暂时锁定
+- 基线版本：`v0.1`（已锁定）
+- 当前研发轨道：`v0.2-draft`（已落 P0+P1）
 
-## v0.1 主 API
+## 当前主 API
 - `runTask`
 - `runParallel`
 - `createRunner`

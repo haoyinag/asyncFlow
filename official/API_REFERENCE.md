@@ -1,69 +1,85 @@
-# API Reference (v0.1)
+# API Reference (v0.2 Draft)
 
-This reference only covers the locked `v0.1` API.
+## Error Model
 
-## 1) runTask
+### `AsyncFlowError`
+```ts
+interface AsyncFlowError {
+  code: string;
+  message: string;
+  kind: "abort" | "network" | "business" | "unknown";
+  stepId?: string;
+  phase?: string;
+  cause?: unknown;
+  aborted: boolean;
+}
+```
+
+## `runTask`
 
 ### Signature
 ```ts
-runTask<I, O, M extends Record<string, unknown>>(
-  taskFn: TaskFn<I, O, M>,
-  input?: I,
-  options?: TaskRunOptions,
-  initialMeta?: M
-): TaskHandleSimple<O, M>
+runTask(taskFn, config?)
 ```
 
-### Params
-- `taskFn`:
-  - `ctx.input`
-  - `ctx.signal`
-  - `ctx.setMeta(patch)`
-  - `ctx.getMeta()`
-- `input`: optional task input
-- `options.signal`: optional external abort signal
-- `initialMeta`: optional metadata object
+### Config
+```ts
+type TaskRunConfig<I, M> = {
+  params?: I;
+  signal?: AbortSignal;
+  meta?: M;
+}
+```
+
+### Context
+```ts
+type TaskContext<I, M> = {
+  params: I;
+  signal: AbortSignal;
+  setMeta: (patch: Partial<M>) => void;
+  getMeta: () => M;
+}
+```
 
 ### Return
-`TaskHandleSimple` with:
+```ts
+TaskHandleSimple<T, M>
+```
+with:
 - `id`
 - `result`
 - `cancel(reason?)`
 - `onState(listener)`
 - `getState()`
 
-### Status lifecycle
-`idle -> running -> success | error | aborted`
-
-## 2) runParallel
+## `runParallel`
 
 ### Signature
 ```ts
-runParallel<I, O>(tasks, input?, options?): Promise<O[]>
+runParallel(tasks, params?, options?)
 ```
 
 ### Options
-- `concurrency` (default: 8)
-- `abortOnError` (default: true)
-- `signal`
+```ts
+{
+  concurrency?: number;            // default 8
+  mode?: "fail-fast" | "collect-all"; // default fail-fast
+  signal?: AbortSignal;
+}
+```
 
-### Behavior
-- Keeps output order aligned with input order.
-- `abortOnError=true`: reject on first failure.
-- `abortOnError=false`: wait all, then reject with `AggregateError` if needed.
-
-## 3) createRunner
+## `createRunner`
 
 ### Signature
 ```ts
-createRunner({ concurrency?, abortOnError? })
+createRunner({ concurrency?, mode? })
 ```
 
 ### Return
-- `runner.runTask(...)`
-- `runner.runParallel(...)`
+- `runTask`
+- `runParallel`
 
-## 4) useReactAsyncTask
+## `useReactAsyncTask`
 
 ### Signature
 ```ts
@@ -71,7 +87,8 @@ useReactAsyncTask(taskFn, options?, initialMeta?)
 ```
 
 ### Return
-- `run`
+- `run(params?, options?)`
+- `execute(params?, options?)` (`run` alias)
 - `cancel`
 - `taskId`
 - `status`
@@ -80,11 +97,7 @@ useReactAsyncTask(taskFn, options?, initialMeta?)
 - `error`
 - `meta`
 
-### Notes
-- New `run()` cancels the previous active task.
-- Unmount auto-cancels and unsubscribes.
-
-## 5) useVueAsyncTask
+## `useVueAsyncTask`
 
 ### Signature
 ```ts
@@ -92,4 +105,4 @@ useVueAsyncTask(taskFn, options?, initialMeta?)
 ```
 
 ### Return
-Same shape as React hook, via Vue refs.
+Same fields as React hook, via Vue refs.

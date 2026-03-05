@@ -5,41 +5,39 @@ import type {
   ParallelTask,
   RunnerOptions,
   TaskFn,
+  TaskRunConfig,
   TaskHandleSimple,
-  TaskRunOptions
 } from "./types";
 
 export interface Runner {
   runTask: <I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>>(
     taskFn: TaskFn<I, O, M>,
-    input?: I,
-    options?: TaskRunOptions,
-    initialMeta?: M
+    config?: TaskRunConfig<I, M>
   ) => TaskHandleSimple<O, M>;
   runParallel: <I = unknown, O = unknown>(
     tasks: Array<ParallelTask<I, O>>,
-    input?: I,
+    params?: I,
     options?: ParallelRunOptions
   ) => Promise<O[]>;
 }
 
-const defaultOptions: Required<Pick<RunnerOptions, "concurrency" | "abortOnError">> = {
+const defaultOptions: Required<Pick<RunnerOptions, "concurrency" | "mode">> = {
   concurrency: 8,
-  abortOnError: true
+  mode: "fail-fast"
 };
 
 export function createRunner(options: RunnerOptions = {}): Runner {
   const merged = {
     concurrency: options.concurrency ?? defaultOptions.concurrency,
-    abortOnError: options.abortOnError ?? defaultOptions.abortOnError
+    mode: options.mode ?? defaultOptions.mode
   };
 
   return {
-    runTask: (taskFn, input, runOptions, initialMeta) => runTaskBase(taskFn, input, runOptions, initialMeta),
-    runParallel: (tasks, input, runOptions) =>
-      runParallelBase(tasks, input, {
+    runTask: (taskFn, config) => runTaskBase(taskFn, config),
+    runParallel: (tasks, params, runOptions) =>
+      runParallelBase(tasks, params, {
         concurrency: runOptions?.concurrency ?? merged.concurrency,
-        abortOnError: runOptions?.abortOnError ?? merged.abortOnError,
+        mode: runOptions?.mode ?? merged.mode,
         signal: runOptions?.signal
       })
   };

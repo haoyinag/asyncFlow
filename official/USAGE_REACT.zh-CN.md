@@ -1,42 +1,23 @@
-# React 使用示例（当前 v0.1 API）
+# React 使用文档（v0.2 草案）
 
-## 示例：登录后并发加载首页数据
+## 1. 全局初始化（推荐）
+```ts
+import { createRunner } from "asyncflow";
+
+export const asyncRunner = createRunner({
+  concurrency: 4,
+  mode: "fail-fast"
+});
+```
+
+## 2. 子组件使用
 ```tsx
-import React, { useState } from "react";
-import { runParallel, useReactAsyncTask } from "asyncflow";
+import { useReactAsyncTask } from "asyncflow";
 
-export default function Demo() {
-  const [form, setForm] = useState({ account: "", password: "", captcha: "" });
-
-  const { run, cancel, status, loading, data, error } = useReactAsyncTask(async ({ signal, input }) => {
-    const payload = input as typeof form;
-
-    const qr = await getLoginQrCode(signal);
-    const login = await loginByPassword(payload, qr.qrId, signal);
-    const token = await getToken(login.sessionId, signal);
-
-    const [notices, list, vip] = await runParallel(
-      [
-        () => fetchNotices(token.accessToken, signal),
-        () => fetchList(token.accessToken, signal),
-        () => fetchVipInfo(token.accessToken, signal)
-      ],
-      undefined,
-      { concurrency: 2, signal }
-    );
-
-    return { qr, token, notices, list, vip };
-  });
-
-  return (
-    <div>
-      <button onClick={() => run(form)}>Run</button>
-      <button onClick={() => cancel("manual")}>Cancel</button>
-      <p>{status}</p>
-      <p>{String(loading)}</p>
-      <p>{error?.message}</p>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
-  );
-}
+const { execute, cancel, status, loading, data, error } = useReactAsyncTask(async ({ params, signal }) => {
+  const qr = await getLoginQrCode(signal);
+  const login = await loginByPassword(params, qr.qrId, signal);
+  const token = await getToken(login.sessionId, signal);
+  return { token };
+});
 ```

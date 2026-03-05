@@ -1,12 +1,12 @@
 # AsyncFlow
 
-AsyncFlow v0.1 is a native-first async guardrail library.
+AsyncFlow is a native-first async guardrail library.
 
 ## Current Status
-- Version: `v0.1`
-- Status: locked (temporary freeze)
+- Baseline: `v0.1` (locked)
+- Working track: `v0.2-draft` (P0+P1 applied)
 
-## Primary API (v0.1)
+## Primary API (current draft)
 - `runTask`
 - `runParallel`
 - `createRunner`

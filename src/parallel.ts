@@ -15,15 +15,17 @@ function attachSignal(parent?: AbortSignal) {
 
 export async function runParallel<I = unknown, O = unknown>(
   tasks: Array<ParallelTask<I, O>>,
-  input?: I,
+  params?: I,
   options: ParallelRunOptions = {}
 ): Promise<O[]> {
   const concurrency = options.concurrency ?? 8;
-  const abortOnError = options.abortOnError ?? true;
+  const mode = options.mode ?? "fail-fast";
+  const abortOnError = mode === "fail-fast";
 
   if (concurrency <= 0 || Number.isNaN(concurrency)) {
     throw new AsyncFlowError({
       code: "INVALID_CONCURRENCY",
+      kind: "business",
       message: "concurrency must be > 0",
       phase: "parallel",
       aborted: false
@@ -75,7 +77,7 @@ export async function runParallel<I = unknown, O = unknown>(
         nextIndex += 1;
         active += 1;
 
-        Promise.resolve(tasks[current]({ input: input as I, signal: controller.signal, index: current }))
+        Promise.resolve(tasks[current]({ params: params as I, signal: controller.signal, index: current }))
           .then((value) => {
             results[current] = value;
           })

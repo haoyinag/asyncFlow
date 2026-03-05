@@ -9,7 +9,8 @@ export interface ReactUseAsyncTaskState<I = unknown, O = unknown, M extends Reco
   data: O | undefined;
   error: import("../errors").AsyncFlowError | null;
   meta: M;
-  run: (input?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
+  run: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
+  execute: (params?: I, options?: TaskRunOptions) => Promise<TaskResult<O, M>>;
   cancel: (reason?: string) => void;
 }
 
@@ -38,11 +39,15 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
   }, []);
 
   const run = useCallback(
-    async (input?: I, runOptions?: TaskRunOptions) => {
+    async (params?: I, runOptions?: TaskRunOptions) => {
       currentTaskRef.current?.cancel("replaced_by_new_run");
       clearSubscription();
 
-      const task = runner.runTask(taskFn, input, runOptions, initialMeta);
+      const task = runner.runTask(taskFn, {
+        params,
+        signal: runOptions?.signal,
+        meta: initialMeta
+      });
       currentTaskRef.current = task;
       setTaskId(task.id);
 
@@ -79,6 +84,7 @@ export function useAsyncTask<I = unknown, O = unknown, M extends Record<string, 
     error,
     meta,
     run,
+    execute: run,
     cancel
   };
 }

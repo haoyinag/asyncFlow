@@ -30,8 +30,8 @@ const result = await task.result;
 ```tsx
 import { useReactAsyncTask } from "asyncflow";
 
-const { run, cancel, status, loading, data, error } = useReactAsyncTask(async ({ signal, input }) => {
-  return login(input, signal);
+const { run, execute, cancel, status, loading, data, error } = useReactAsyncTask(async ({ signal, params }) => {
+  return login(params, signal);
 });
 ```
 
@@ -39,7 +39,7 @@ const { run, cancel, status, loading, data, error } = useReactAsyncTask(async ({
 ```ts
 import { useVueAsyncTask } from "asyncflow";
 
-const { run, cancel, status, loading, data, error } = useVueAsyncTask(async ({ signal, input }) => {
-  return login(input, signal);
+const { run, execute, cancel, status, loading, data, error } = useVueAsyncTask(async ({ signal, params }) => {
+  return login(params, signal);
 });
 ```

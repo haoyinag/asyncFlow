@@ -1,23 +1,19 @@
-# Vue Usage (v0.1 API)
+# Vue Usage (v0.2 Draft)
 
+## Global initialization
 ```ts
-import { runParallel, useVueAsyncTask } from "asyncflow";
+import { createRunner } from "asyncflow";
+export const asyncRunner = createRunner({ concurrency: 4, mode: "fail-fast" });
+```
 
-const { run, cancel, status, loading, data, error } = useVueAsyncTask(async ({ signal, input }) => {
+## Child component usage
+```ts
+import { useVueAsyncTask } from "asyncflow";
+
+const { execute, cancel, status, loading, data, error } = useVueAsyncTask(async ({ params, signal }) => {
   const qr = await getLoginQrCode(signal);
-  const login = await loginByPassword(input, qr.qrId, signal);
+  const login = await loginByPassword(params, qr.qrId, signal);
   const token = await getToken(login.sessionId, signal);
-
-  const [notices, list, vip] = await runParallel(
-    [
-      () => fetchNotices(token.accessToken, signal),
-      () => fetchList(token.accessToken, signal),
-      () => fetchVipInfo(token.accessToken, signal)
-    ],
-    undefined,
-    { concurrency: 2, signal }
-  );
-
-  return { qr, token, notices, list, vip };
+  return { token };
 });
 ```

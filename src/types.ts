@@ -1,6 +1,7 @@
 export interface AsyncFlowErrorShape {
   code: string;
   message: string;
+  kind: "abort" | "network" | "business" | "unknown";
   stepId?: string;
   phase?: string;
   cause?: unknown;
@@ -27,7 +28,7 @@ export interface TaskResult<T = unknown, M extends Record<string, unknown> = Rec
 }
 
 export interface TaskContext<I = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
-  input: I;
+  params: I;
   signal: AbortSignal;
   setMeta: (patch: Partial<M>) => void;
   getMeta: () => M;
@@ -36,6 +37,12 @@ export interface TaskContext<I = unknown, M extends Record<string, unknown> = Re
 export type TaskFn<I = unknown, O = unknown, M extends Record<string, unknown> = Record<string, unknown>> = (
   ctx: TaskContext<I, M>
 ) => O | Promise<O>;
+
+export interface TaskRunConfig<I = unknown, M extends Record<string, unknown> = Record<string, unknown>> {
+  params?: I;
+  signal?: AbortSignal;
+  meta?: M;
+}
 
 export interface TaskRunOptions {
   signal?: AbortSignal;
@@ -50,7 +57,7 @@ export interface TaskHandleSimple<T = unknown, M extends Record<string, unknown>
 }
 
 export interface ParallelTaskContext<I = unknown> {
-  input: I;
+  params: I;
   signal: AbortSignal;
   index: number;
 }
@@ -61,10 +68,11 @@ export type ParallelTask<I = unknown, O = unknown> = (
 
 export interface ParallelRunOptions extends TaskRunOptions {
   concurrency?: number;
-  abortOnError?: boolean;
+  mode?: "fail-fast" | "collect-all";
+  signal?: AbortSignal;
 }
 
 export interface RunnerOptions {
   concurrency?: number;
-  abortOnError?: boolean;
+  mode?: "fail-fast" | "collect-all";
 }

@@ -23,12 +23,12 @@ function sleep(ms: number, signal?: AbortSignal) {
 }
 
 describe("runner api", () => {
-  it("runTask keeps native async/await style with unified state", async () => {
-    const task = runTask(async ({ input, setMeta, signal }) => {
+  it("runTask supports config object with params/meta", async () => {
+    const task = runTask(async ({ params, setMeta, signal }) => {
       setMeta({ phase: "start" });
       await sleep(5, signal);
-      return `hello-${String(input)}`;
-    }, "world", undefined, { phase: "init" as string });
+      return `hello-${String(params)}`;
+    }, { params: "world", meta: { phase: "init" as string } });
 
     const snapshots: string[] = [];
     const off = task.onState((s) => snapshots.push(s.status));
@@ -53,6 +53,7 @@ describe("runner api", () => {
     const result = await task.result;
     expect(result.status).toBe("aborted");
     expect(result.error?.aborted).toBe(true);
+    expect(result.error?.kind).toBe("abort");
   });
 
   it("runParallel limits concurrency", async () => {
@@ -76,7 +77,7 @@ describe("runner api", () => {
   });
 
   it("createRunner applies default options", async () => {
-    const runner = createRunner({ concurrency: 2, abortOnError: true });
+    const runner = createRunner({ concurrency: 2, mode: "fail-fast" });
 
     let active = 0;
     let maxActive = 0;
@@ -92,5 +93,32 @@ describe("runner api", () => {
     );
 
     expect(maxActive).toBeLessThanOrEqual(2);
+  });
+
+  it("runParallel supports mode=collect-all and returns AggregateError", async () => {
+    await expect(
+      runParallel(
+        [
+          async () => {
+            await sleep(5);
+            return 1;
+          },
+          async () => {
+            await sleep(3);
+            throw new Error("broken");
+          }
+        ],
+        undefined,
+        { mode: "collect-all", concurrency: 2 }
+      )
+    ).rejects.toBeInstanceOf(AggregateError);
+  });
+
+  it("createRunner runTask uses config object style", async () => {
+    const runner = createRunner();
+    const task = runner.runTask(async ({ params }) => `new-${String(params)}`, { params: "ok" });
+    const res = await task.result;
+    expect(res.status).toBe("success");
+    expect(res.data).toBe("new-ok");
   });
 });
