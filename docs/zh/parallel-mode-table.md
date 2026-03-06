@@ -1,18 +1,13 @@
-# 并发模式对照表
+# 并发模式对照
 
-| 模式 | 含义 | 适用场景 | 失败行为 |
-|---|---|---|---|
-| `fail-fast` | 任一失败即中止整体 | 首页聚合、关键流程 | 第一处错误直接抛出，其他任务中止 |
-| `collect-all` | 全部跑完后统一判断 | 批处理、统计类任务 | 全部结束后，如有失败抛 `AggregateError` |
+| 维度 | `fail-fast` | `collect-all` |
+|---|---|---|
+| 默认值 | 是 | 否 |
+| 首个任务失败后 | 立刻结束并 reject | 继续等待其余任务 |
+| 失败返回形式 | `AsyncTaskError` | `AggregateError` |
+| 适合场景 | 任一失败就不必继续（如关键链路） | 需要汇总全部子任务结果/错误 |
 
-## 推荐默认
-- 默认用 `fail-fast`
-- 只有明确需要“尽量跑完再统一处理”时才用 `collect-all`
+## 选择建议
 
-## 示例
-```ts
-await runParallel(tasks, undefined, {
-  concurrency: 3,
-  mode: "fail-fast"
-});
-```
+- 页面初始化依赖完整性高：优先 `fail-fast`
+- 批处理、报表类任务：优先 `collect-all`

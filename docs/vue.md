@@ -1,19 +1,47 @@
-# Vue Usage (v0.2 Draft)
+# Vue: useTask
 
-## Global initialization
+## Import
+
 ```ts
-import { createRunner } from "mangoo";
-export const taskRunner = createRunner({ concurrency: 4, mode: "fail-fast" });
+import { useTask } from 'mangoo/vue';
 ```
 
-## Child component usage
-```ts
-import { useTask } from "mangoo/vue";
+## Basic usage
 
-const { execute, cancel, status, loading, data, error } = useTask(async ({ params, signal }) => {
-  const qr = await getLoginQrCode(signal);
-  const login = await loginByPassword(params, qr.qrId, signal);
-  const token = await getToken(login.sessionId, signal);
-  return { token };
-});
+```vue
+<script setup lang="ts">
+import { useTask } from 'mangoo/vue';
+
+type SaveInput = { title: string };
+type SaveResult = { id: string };
+
+const task = useTask<SaveInput, SaveResult, { phase: string }>(
+  async ({ params, signal, setMeta }) => {
+    setMeta({ phase: 'saving' });
+    return api.save(params, { signal });
+  },
+  { concurrency: 4, mode: 'fail-fast' },
+  { phase: 'idle' }
+);
+
+function onSubmit() {
+  void task.run({ title: 'hello' });
+}
+</script>
+
+<template>
+  <button :disabled="task.loading" @click="onSubmit">Save</button>
+  <button :disabled="!task.loading" @click="task.cancel('manual_cancel')">Cancel</button>
+
+  <p>Status: {{ task.status }}</p>
+  <p>Phase: {{ task.meta.phase }}</p>
+  <p>Error: {{ task.error?.message }}</p>
+  <p>ID: {{ task.data?.id }}</p>
+</template>
 ```
+
+## Behavior notes
+
+- `run` and `execute` are equivalent.
+- when `run` is called again, previous run is canceled first.
+- on component unmount, current run is canceled automatically.

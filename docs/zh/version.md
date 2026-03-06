@@ -1,7 +1,12 @@
-# 版本
+# 版本说明
 
-- 锁定基线：`v0.1`
-- 当前研发轨道：`v0.2-draft`（P0 + P1 已实现）
-- 日期：2026-03-06
+当前文档基于 `v0.2.x` API：
+- `runTask`
+- `runParallel`
+- `createRunner`
+- `useTask`（React / Vue）
 
-v0.2 是否推进，取决于真实项目使用数据。
+如果你从更早草案升级，建议重点检查：
+- Hook 参数命名是否为 `params`
+- 是否从 `mangoo/react`、`mangoo/vue` 子路径导入
+- `runParallel` 失败模式是否符合预期

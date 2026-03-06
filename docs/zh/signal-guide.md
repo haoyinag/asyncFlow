@@ -1,24 +1,33 @@
-# Signal 决策图（文本版）
+# 取消与 Signal
 
-## 结论先说
-`signal` 是可选接入，不是必须接入。
+## 一句话原则
 
-## 决策流程
-1. 你的请求层支持 `signal` 吗？
-- 是：在请求调用里传 `signal`，可真正中断网络请求
-- 否：先不传，任务状态仍可取消，但请求可能继续执行
+不传 `signal` 也能跑；传了 `signal` 才能真正中断底层请求。
 
-2. 当前页面有竞态风险吗（重复点击、切页中断）？
-- 是：优先改造关键接口支持 `signal`
-- 否：可先保持现状，后续再逐步接入
+## 推荐做法
 
-3. 哪些接口优先接入 `signal`？
-- 登录
-- 首页聚合请求
-- 大列表分页
-- 上传/下载
+在每一层都把 `signal` 继续透传：
 
-## 实战建议
-- 不要一上来全量改造
-- 先改“慢接口 + 高价值页面”
-- 验证收益后再扩展
+```ts
+const task = runTask(async ({ signal }) => {
+  return api.fetchUser({ signal });
+});
+```
+
+```ts
+function fetchUser({ signal }: { signal?: AbortSignal }) {
+  return fetch('/api/user', { signal }).then((r) => r.json());
+}
+```
+
+## 常见误区
+
+- 只在顶层有 `signal`，请求函数没接收，结果“看起来取消了但请求没停”。
+- 手动 `cancel()` 后仍然收到成功结果。通常是底层任务没有响应 `signal`。
+
+## 与状态的关系
+
+当任务因取消而结束时：
+- `status` 为 `aborted`
+- `error.kind` 为 `abort`
+- `error.aborted` 为 `true`

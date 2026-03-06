@@ -1,109 +1,70 @@
-# API 参考（v0.2 草案）
+# API 参考
 
-## 错误模型
+## 核心（`mangoo`）
 
-### `AsyncTaskError`
+### `runTask(taskFn, config?)`
+
+运行单个异步任务，返回 `TaskHandleSimple`。
+
+### `runParallel(tasks, params?, options?)`
+
+运行并发子任务，支持并发上限与失败策略。
+
+### `createRunner(options?)`
+
+创建带默认并发配置的运行器：
+
 ```ts
-interface AsyncTaskError {
-  code: string;
-  message: string;
-  kind: "abort" | "network" | "business" | "unknown";
-  stepId?: string;
-  phase?: string;
-  cause?: unknown;
-  aborted: boolean;
-}
+createRunner({
+  concurrency?: number; // 默认 8
+  mode?: 'fail-fast' | 'collect-all'; // 默认 fail-fast
+});
 ```
 
-## `runTask`
+返回：
 
-### 签名
-```ts
-runTask(taskFn, config?)
-```
-
-### config
-```ts
-type TaskRunConfig<I, M> = {
-  params?: I;
-  signal?: AbortSignal;
-  meta?: M;
-}
-```
-
-### 上下文
-```ts
-type TaskContext<I, M> = {
-  params: I;
-  signal: AbortSignal;
-  setMeta: (patch: Partial<M>) => void;
-  getMeta: () => M;
-}
-```
-
-### 返回
-`TaskHandleSimple<T, M>`，包含：
-- `id`
-- `result`
-- `cancel(reason?)`
-- `onState(listener)`
-- `getState()`
-
-## `runParallel`
-
-### 签名
-```ts
-runParallel(tasks, params?, options?)
-```
-
-### options
 ```ts
 {
-  concurrency?: number;            // 默认 8
-  mode?: "fail-fast" | "collect-all"; // 默认 fail-fast
-  signal?: AbortSignal;
+  runTask,
+  runParallel
 }
 ```
 
-## `createRunner`
+## React（`mangoo/react`）
 
-### 签名
-```ts
-createRunner({ concurrency?, mode? })
-```
+### `useTask(taskFn, options?, initialMeta?)`
 
-### 返回
-- `runTask`
-- `runParallel`
-
-## `useTask`（React）
-
-### 签名
-```ts
-import { useTask } from "mangoo/react";
-
-useTask(taskFn, options?, initialMeta?)
-```
-
-### 返回
-- `run(params?, options?)`
-- `execute(params?, options?)`（`run` 别名）
-- `cancel`
+返回字段：
 - `taskId`
 - `status`
 - `loading`
 - `data`
 - `error`
 - `meta`
+- `run`
+- `execute`（`run` 别名）
+- `cancel`
 
-## `useTask`（Vue）
+## Vue（`mangoo/vue`）
 
-### 签名
+### `useTask(taskFn, options?, initialMeta?)`
+
+返回字段与 React 一致，对应值以 Vue `ref` 形式暴露。
+
+## 核心类型
+
 ```ts
-import { useTask } from "mangoo/vue";
-
-useTask(taskFn, options?, initialMeta?)
+type TaskStatus = 'idle' | 'running' | 'success' | 'error' | 'aborted';
 ```
 
-### 返回
-与 React 一致，字段以 Vue Ref 暴露。
+```ts
+interface AsyncTaskError {
+  code: string;
+  message: string;
+  kind: 'abort' | 'network' | 'business' | 'unknown';
+  stepId?: string;
+  phase?: string;
+  cause?: unknown;
+  aborted: boolean;
+}
+```

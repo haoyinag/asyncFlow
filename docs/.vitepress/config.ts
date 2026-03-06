@@ -17,11 +17,15 @@ export default defineConfig({
     logo: '/logo.svg',
     siteTitle: 'mangoo',
     nav: [
-      { text: 'Guide', link: '/api-reference' },
+      { text: 'Guide', link: '/getting-started' },
+      { text: 'API', link: '/api-reference' },
+      { text: 'React', link: '/react' },
+      { text: 'Vue', link: '/vue' },
       { text: '中文', link: '/zh/' },
       { text: 'GitHub', link: 'https://github.com/haoyinag/mangoo' }
     ],
     socialLinks: [{ icon: 'github', link: 'https://github.com/haoyinag/mangoo' }],
+    search: { provider: 'local' },
     footer: {
       message: 'Released under MIT License.',
       copyright: 'Copyright © 2026 mangoo contributors'
@@ -29,35 +33,59 @@ export default defineConfig({
     sidebar: {
       '/': [
         {
-          text: 'Docs',
+          text: 'Getting Started',
           items: [
-            { text: 'API Reference', link: '/api-reference' },
-            { text: 'React Usage', link: '/react' },
-            { text: 'Vue Usage', link: '/vue' }
+            { text: 'Introduction', link: '/getting-started' },
+            { text: 'Core Concepts', link: '/core-concepts' }
           ]
+        },
+        {
+          text: 'Core APIs',
+          items: [
+            { text: 'runTask', link: '/run-task' },
+            { text: 'runParallel', link: '/run-parallel' },
+            { text: 'Error Handling', link: '/error-handling' }
+          ]
+        },
+        {
+          text: 'Framework Adapters',
+          items: [
+            { text: 'React: useTask', link: '/react' },
+            { text: 'Vue: useTask', link: '/vue' }
+          ]
+        },
+        {
+          text: 'Reference',
+          items: [{ text: 'API Reference', link: '/api-reference' }]
         }
       ],
       '/zh/': [
         {
-          text: '入门',
+          text: '开始使用',
           items: [
             { text: '简介', link: '/zh/introduction' },
             { text: '10 分钟上手', link: '/zh/get-started' },
-            { text: '快速开始', link: '/zh/quick-start' },
             { text: '核心概念', link: '/zh/essentials' }
           ]
         },
         {
-          text: '使用指南',
+          text: '核心 API',
           items: [
-            { text: 'Signal 决策图', link: '/zh/signal-guide' },
-            { text: '并发模式对照表', link: '/zh/parallel-mode-table' },
-            { text: 'React 使用', link: '/zh/react' },
-            { text: 'Vue 使用', link: '/zh/vue' }
+            { text: 'runTask', link: '/zh/run-task' },
+            { text: 'runParallel', link: '/zh/run-parallel' },
+            { text: '取消与 Signal', link: '/zh/signal-guide' },
+            { text: '并发模式对照', link: '/zh/parallel-mode-table' }
           ]
         },
         {
-          text: '参考',
+          text: '框架适配',
+          items: [
+            { text: 'React 用法', link: '/zh/react' },
+            { text: 'Vue 用法', link: '/zh/vue' }
+          ]
+        },
+        {
+          text: '参考与实践',
           items: [
             { text: 'API 参考', link: '/zh/api-reference' },
             { text: '最佳实践', link: '/zh/best-practices' },
@@ -66,9 +94,6 @@ export default defineConfig({
           ]
         }
       ]
-    },
-    search: {
-      provider: 'local'
     }
   },
   locales: {

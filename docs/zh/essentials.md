@@ -1,21 +1,36 @@
 # 核心概念
 
-## runTask
-`runTask` 执行一个异步任务，返回任务句柄：
-1. `result`
-2. `cancel`
-3. `onState`
-4. `getState`
+## Task（任务）
 
-`taskFn` 使用 `params` 获取本次执行输入。
+一次 `runTask` 执行就是一个任务实例，具备：
+- `id`
+- `result`
+- `cancel(reason?)`
+- `onState` / `getState`
 
-## runParallel
-`runParallel` 负责并发段：
-1. 并发上限 `concurrency`
-2. 失败策略 `mode: fail-fast | collect-all`
+## State（状态）
 
-## createRunner
-在应用初始化时集中定义默认策略：
-```ts
-const runner = createRunner({ concurrency: 4, mode: "fail-fast" });
-```
+每个任务都有统一状态结构：
+- `status`: `idle | running | success | error | aborted`
+- `loading`
+- `data`
+- `error`
+- `meta`
+- `startedAt` / `endedAt`
+
+## Cancellation（取消）
+
+取消本质是中断 `AbortSignal`。
+
+要点：
+- 取消是“协作式”的
+- 你的请求层要把 `signal` 传下去
+- 底层不响应 `signal` 时，任务可能仍成功返回
+
+## Runner（预配置执行器）
+
+`createRunner({ concurrency, mode })` 会返回一组 API：
+- `runner.runTask`
+- `runner.runParallel`
+
+默认配置只影响 `runParallel`。

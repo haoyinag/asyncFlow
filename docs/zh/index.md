@@ -4,7 +4,7 @@ layout: home
 hero:
   name: mangoo
   text: 原生优先的异步护栏
-  tagline: 保留 async/await 写法，补齐状态、取消与并发控制。
+  tagline: 继续写 async/await，同时获得状态、取消与并发控制。
   actions:
     - theme: brand
       text: 10 分钟上手
@@ -13,14 +13,14 @@ hero:
       text: API 参考
       link: /zh/api-reference
     - theme: alt
-      text: English Docs
+      text: English
       link: /
 
 features:
-  - title: 原生写法不改造
-    details: 业务流程继续写原生 async/await，不引入重型运行时。
-  - title: 核心跨框架
-    details: 核心库框架无关，按需接入 React 与 Vue。
-  - title: 并发语义清晰
-    details: 用 runParallel 管理并发段，支持 fail-fast 与 collect-all。
+  - title: 不改写业务主线
+    details: 业务逻辑仍然是普通 async 函数，不引入额外 DSL。
+  - title: 一次执行，一套状态
+    details: status/loading/data/error/meta 和时间戳统一可观测。
+  - title: 并发策略可控
+    details: 并发段用 runParallel，支持 fail-fast 与 collect-all。
 ---
